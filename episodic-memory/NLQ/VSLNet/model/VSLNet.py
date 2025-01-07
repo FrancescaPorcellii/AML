@@ -133,7 +133,7 @@ class VSLNet(nn.Module):
             query_features = self.embedding_net(word_ids, char_ids)
         
         query_features = self.feature_encoder(query_features, mask=q_mask)
-        if self.configs.encoder_shared:
+        if self.configs.encoder_shared == "shared":
             video_features = self.feature_encoder(video_features, mask=v_mask)
         else:
             video_features = self.video_encoder(video_features, mask=v_mask)
