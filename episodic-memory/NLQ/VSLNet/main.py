@@ -270,6 +270,8 @@ def create_executor(configs):
 
 if __name__ == "__main__":
     configs, parser = options.read_command_line()
+    print(f"Running with {configs}", flush=True)
+
     if not configs.slurm:
         main(configs, parser)
     else:
