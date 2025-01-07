@@ -206,8 +206,8 @@ def read_command_line():
 
     parser.add_argument(
         "--encoder_shared",
-        type=bool,
-        default=True,
+        type=str,
+        default="shared",
         help="Whether to share the encoder between video and text",
     )
 
