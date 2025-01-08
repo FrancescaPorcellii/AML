@@ -96,6 +96,8 @@ class Ego4DClip(data.Dataset):
                                             query_times[1] - w_start,
                                         ],
                                         'query_uid': anno_uid+'_'+query["query"],
+                                        "query_idx": query_idx,
+                                        "clip": clip_uid
                                     }
                                     if w_start < clip_duration:
                                         anno_pairs.append(new_anno)
