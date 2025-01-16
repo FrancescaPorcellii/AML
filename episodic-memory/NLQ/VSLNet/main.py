@@ -79,6 +79,8 @@ def main(configs, parser):
         home_dir = home_dir + "_" + configs.suffix
     model_dir = os.path.join(home_dir, "model")
 
+    
+
     writer = None
     if configs.log_to_tensorboard is not None:
         log_dir = os.path.join(configs.tb_log_dir, configs.log_to_tensorboard)
@@ -97,11 +99,28 @@ def main(configs, parser):
             sort_keys=True,
             save_pretty=True,
         )
-        # build model
+         # build model
         model = VSLNet(
             configs=configs, word_vectors=dataset.get("word_vector", None)
         ).to(device)
         optimizer, scheduler = build_optimizer_and_scheduler(model, configs=configs)
+
+        # Resume from checkpoint if specified
+        if configs.resume:
+            checkpoint_path = get_last_checkpoint(configs.resume, suffix="t7")
+            if checkpoint_path:
+                print(f"Loading checkpoint from {checkpoint_path}")
+                checkpoint = torch.load(checkpoint_path)
+                model.load_state_dict(checkpoint)
+                optimizer, scheduler = build_optimizer_and_scheduler(model, configs=configs)
+            else:
+                print("No checkpoint found. Starting training from scratch.")
+            
+        else:
+            print("Starting training from scratch.")
+           
+
+            
         # start training
         best_metric = -1.0
         score_writer = open(
@@ -270,6 +289,8 @@ def create_executor(configs):
 
 if __name__ == "__main__":
     configs, parser = options.read_command_line()
+    print(f"Running with {configs}", flush=True)
+
     if not configs.slurm:
         main(configs, parser)
     else:
