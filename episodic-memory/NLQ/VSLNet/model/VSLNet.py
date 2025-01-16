@@ -66,6 +66,15 @@ class VSLNet(nn.Module):
             max_pos_len=configs.max_pos_len,
             drop_rate=configs.drop_rate,
         )
+
+        self.video_encoder = FeatureEncoder(
+            dim=configs.dim,
+            num_heads=configs.num_heads,
+            kernel_size=9,
+            num_layers=6,
+            max_pos_len=configs.max_pos_len,
+            drop_rate=configs.drop_rate + 0.1,
+        )
         # video and query fusion
         self.cq_attention = CQAttention(dim=configs.dim, drop_rate=configs.drop_rate)
         self.cq_concat = CQConcatenate(dim=configs.dim)
@@ -122,9 +131,12 @@ class VSLNet(nn.Module):
             query_features = self.query_affine(query_features)
         else:
             query_features = self.embedding_net(word_ids, char_ids)
-
+        
         query_features = self.feature_encoder(query_features, mask=q_mask)
-        video_features = self.feature_encoder(video_features, mask=v_mask)
+        if self.configs.encoder_shared == "shared":
+            video_features = self.feature_encoder(video_features, mask=v_mask)
+        else:
+            video_features = self.video_encoder(video_features, mask=v_mask)
         features = self.cq_attention(video_features, query_features, v_mask, q_mask)
         features = self.cq_concat(features, query_features, q_mask)
         h_score = self.highlight_layer(features, v_mask)

@@ -213,5 +213,15 @@ def read_command_line():
     )
     
     
+
+
+    parser.add_argument(
+        "--encoder_shared",
+        type=str,
+        default="shared",
+        help="Whether to share the encoder between video and text",
+    )
+
     configs = parser.parse_args()
+
     return configs, parser

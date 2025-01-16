@@ -3,11 +3,11 @@ import multiprocessing
 import os
 from collections import Counter
 from typing import List, Optional
-
 import numpy as np
+import nltk
+nltk.download("punkt_ba")
 from nltk.tokenize import word_tokenize
 from tqdm import tqdm
-
 from utils.data_util import (
     load_json,
     load_lines,
