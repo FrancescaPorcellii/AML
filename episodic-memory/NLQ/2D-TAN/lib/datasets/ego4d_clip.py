@@ -96,6 +96,8 @@ class Ego4DClip(data.Dataset):
                                             query_times[1] - w_start,
                                         ],
                                         'query_uid': anno_uid+'_'+query["query"],
+                                        "query_idx": query_idx,
+                                        "clip": clip_uid
                                     }
                                     if w_start < clip_duration:
                                         anno_pairs.append(new_anno)
@@ -231,7 +233,7 @@ class Ego4DClip(data.Dataset):
     def get_video_features(self, vid, duration, window_se=None, clip_se=None):
         if "slowfast" == config.DATASET.VIS_INPUT_TYPE:
             fps = 30.0/16 # feature per second. assume
-            feature = torch.load(self.data_dir + "/sf/{}.pt".format(vid))
+            feature = torch.load(self.data_dir + "/sf/egovlp_fp16/{}.pt".format(vid))
 
             # features = np.load(self.data_dir + '/2d/{}.npy'.format(vid))
             features = torch.tensor(feature).float()
