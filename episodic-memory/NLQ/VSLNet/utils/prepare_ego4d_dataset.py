@@ -89,7 +89,13 @@ def convert_ego4d_dataset(args):
     # Reformat the splits to train vslnet.
     all_clip_video_map = {}
     for split in ("train", "val", "test"):
-        read_path = args[f"input_{split}_split"]
+        read_path = args.get(f"input_{split}_split")
+        
+        # Skip processing the test split if it is None
+        if split == "test" and read_path is None:
+            print("Test split is not provided. Skipping test split.")
+            continue
+        
         print(f"Reading [{split}]: {read_path}")
         with open(read_path, "r") as file_id:
             raw_data = json.load(file_id)
@@ -127,6 +133,7 @@ def convert_ego4d_dataset(args):
         json.dump(feature_sizes, file_id)
 
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -136,7 +143,7 @@ if __name__ == "__main__":
         "--input_val_split", required=True, help="Path to Ego4d val split"
     )
     parser.add_argument(
-        "--input_test_split", required=True, help="Path to Ego4d test split"
+        "--input_test_split", required=False, help="Path to Ego4d test split"
     )
     parser.add_argument(
         "--output_save_path", required=True, help="Path to save the output jsons"

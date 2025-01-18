@@ -203,25 +203,18 @@ def read_command_line():
         default=None,
         help="A list of splits to remove empty queries from. Valid values for the list are: ['train', 'val']",  # noqa
     )
-    
-    
     parser.add_argument(
         "--resume",
         type=str,
         default=None,
         help="Path to the checkpoint to resume training from",
     )
-    
-    
-
-
     parser.add_argument(
         "--encoder_shared",
         type=str,
         default="shared",
         help="Whether to share the encoder between video and text",
     )
-
     configs = parser.parse_args()
 
     return configs, parser
