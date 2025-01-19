@@ -5,7 +5,7 @@ from collections import Counter
 from typing import List, Optional
 import numpy as np
 import nltk
-nltk.download("punkt_ba")
+nltk.download("punkt_tab")
 from nltk.tokenize import word_tokenize
 from tqdm import tqdm
 from utils.data_util import (
