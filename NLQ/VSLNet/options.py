@@ -210,6 +210,12 @@ def read_command_line():
         help="Path to the checkpoint to resume training from",
     )
     parser.add_argument(
+        "--pretrained",
+        type=str,
+        default=None,
+        help="Path to the checkpoint of the pretrained model",
+    )
+    parser.add_argument(
         "--encoder_shared",
         type=str,
         default="shared",
