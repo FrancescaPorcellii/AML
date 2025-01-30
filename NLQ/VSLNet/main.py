@@ -100,25 +100,26 @@ def main(configs, parser):
             save_pretty=True,
         )
          # build model
-        model = VSLNet(
-            configs=configs, word_vectors=dataset.get("word_vector", None)
-        ).to(device)
-        optimizer, scheduler = build_optimizer_and_scheduler(model, configs=configs)
+        model = VSLNet( configs=configs, word_vectors=dataset.get("word_vector", None) ).to(device)
 
-        
+
+
         if configs.pretrained:
             checkpoint_path = get_last_checkpoint(configs.pretrained, suffix="t7")
-            if checkpoint_path:
-                print(f"Loading checkpoint from {checkpoint_path}")
-                checkpoint = torch.load(checkpoint_path)
-                model.load_state_dict(checkpoint)
-            else:
-                print("No checkpoint found. Starting training from scratch.")
-        else:
-            print("Starting training from scratch.")
-           
-
+            state_dict = torch.load(checkpoint_path)
+            model_state_dict = model.state_dict()
             
+            if 'embedding_net.weight' in state_dict and state_dict['embedding_net.weight'].shape != model_state_dict['embedding_net.weight'].shape:
+                del state_dict['embedding_net.weight']
+                print("Removed embedding_net.weight from state_dict")
+
+            model.load_state_dict(state_dict, strict=False)
+            print("Pretrained model loaded")
+            
+        optimizer, scheduler = build_optimizer_and_scheduler(model, configs=configs)
+
+
+
         # start training
         best_metric = -1.0
         score_writer = open(
@@ -161,6 +162,11 @@ def main(configs, parser):
                         )
                         .float()
                         .to(device)
+                    )
+                elif configs.predictor == "glove":
+                    word_ids = word_ids.to(device)
+                    query_mask = (
+                        (torch.zeros_like(word_ids) != word_ids).float().to(device)
                     )
                 else:
                     word_ids, char_ids = word_ids.to(device), char_ids.to(device)
@@ -210,7 +216,7 @@ def main(configs, parser):
                         model_dir,
                         f"{configs.model_name}_{epoch}_{global_step}_preds.json",
                     )
-                    # Evaluate on val, keep the top 3 checkpoints.
+                    # Evaluate on val, keep the best checkpoints.
                     results, mIoU, (score_str, score_dict) = eval_test(
                         model=model,
                         data_loader=val_loader,
@@ -239,8 +245,8 @@ def main(configs, parser):
                                 "{}_{}.t7".format(configs.model_name, global_step),
                             ),
                         )
-                        # only keep the top-3 model checkpoints
-                        filter_checkpoints(model_dir, suffix="t7", max_to_keep=3)
+                        # only keep the best model checkpoints
+                        filter_checkpoints(model_dir, suffix="t7", max_to_keep=1)
                     model.train()
             
         score_writer.close()
