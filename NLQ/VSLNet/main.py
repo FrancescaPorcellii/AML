@@ -105,17 +105,8 @@ def main(configs, parser):
         ).to(device)
         optimizer, scheduler = build_optimizer_and_scheduler(model, configs=configs)
 
-        # Resume from checkpoint if specified
-        if configs.resume:
-            checkpoint_path = get_last_checkpoint(configs.resume, suffix="t7")
-            if checkpoint_path:
-                print(f"Loading checkpoint from {checkpoint_path}")
-                checkpoint = torch.load(checkpoint_path)
-                model.load_state_dict(checkpoint)
-                optimizer, scheduler = build_optimizer_and_scheduler(model, configs=configs)
-            else:
-                print("No checkpoint found. Starting training from scratch.")
-        elif configs.pretrained:
+        
+        if configs.pretrained:
             checkpoint_path = get_last_checkpoint(configs.pretrained, suffix="t7")
             if checkpoint_path:
                 print(f"Loading checkpoint from {checkpoint_path}")
