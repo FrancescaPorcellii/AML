@@ -204,12 +204,6 @@ def read_command_line():
         help="A list of splits to remove empty queries from. Valid values for the list are: ['train', 'val']",  # noqa
     )
     parser.add_argument(
-        "--resume",
-        type=str,
-        default=None,
-        help="Path to the checkpoint to resume training from",
-    )
-    parser.add_argument(
         "--pretrained",
         type=str,
         default=None,

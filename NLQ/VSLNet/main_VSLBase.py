@@ -101,6 +101,13 @@ def main(configs, parser):
         model = VSLBase(
             configs=configs, word_vectors=dataset.get("word_vector", None)
         ).to(device)
+        
+        if configs.pretrained:
+            checkpoint_path = get_last_checkpoint(configs.pretrained, suffix="t7")
+            state_dict = torch.load(checkpoint_path)            
+            model.load_state_dict(state_dict, strict=False)
+            print("Pretrained model loaded")
+            
         optimizer, scheduler = build_optimizer_and_scheduler(model, configs=configs)
         # start training
         best_metric = -1.0

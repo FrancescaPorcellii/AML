@@ -163,21 +163,6 @@ class BertEmbedding(nn.Module):
         outputs = self.embedder(**word_ids)
         return outputs["last_hidden_state"].detach()
 
-class LSTMEncoder(nn.Module):
-    def __init__(self, input_dim, hidden_dim, num_layers=1, dropout=0.1):
-        super(LSTMEncoder, self).__init__()
-        self.lstm = nn.LSTM(
-            input_size=input_dim,
-            hidden_size=hidden_dim,
-            num_layers=num_layers,
-            batch_first=True,
-            dropout=dropout,
-        )
-
-    def forward(self, x):
-        outputs, _ = self.lstm(x)
-        return outputs  # Return the full sequence of hidden states
-
 
 class PositionalEmbedding(nn.Module):
     """Construct the embeddings from word, position and token_type embeddings."""

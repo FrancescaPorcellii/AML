@@ -106,13 +106,7 @@ def main(configs, parser):
 
         if configs.pretrained:
             checkpoint_path = get_last_checkpoint(configs.pretrained, suffix="t7")
-            state_dict = torch.load(checkpoint_path)
-            model_state_dict = model.state_dict()
-            
-            if 'embedding_net.weight' in state_dict and state_dict['embedding_net.weight'].shape != model_state_dict['embedding_net.weight'].shape:
-                del state_dict['embedding_net.weight']
-                print("Removed embedding_net.weight from state_dict")
-
+            state_dict = torch.load(checkpoint_path)            
             model.load_state_dict(state_dict, strict=False)
             print("Pretrained model loaded")
             
@@ -162,11 +156,6 @@ def main(configs, parser):
                         )
                         .float()
                         .to(device)
-                    )
-                elif configs.predictor == "glove":
-                    word_ids = word_ids.to(device)
-                    query_mask = (
-                        (torch.zeros_like(word_ids) != word_ids).float().to(device)
                     )
                 else:
                     word_ids, char_ids = word_ids.to(device), char_ids.to(device)
