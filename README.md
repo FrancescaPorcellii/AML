@@ -16,7 +16,7 @@ The complete workflow, including training and evaluation steps, is accessible th
 - **Maggiulli Claudia** – [s332252@studenti.polito.it](mailto:s332252@studenti.polito.it)  
 - **Porcelli Francesca** – [s324804@studenti.polito.it](mailto:s324804@studenti.polito.it)
 - **Sportelli Marco** – [s332224@studenti.polito.it](mailto:s332224@studenti.polito.it)  
-
+ 
 ---
 
 ## Key Highlights  
